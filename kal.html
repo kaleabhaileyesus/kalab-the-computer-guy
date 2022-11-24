@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<head>
+<title>Todo list</title>
+</head>
+<html>
+<body>
+
+<input id="todo-title" type="text" />
+<button onclick="addTodo();"> Add ToDo</button>
+<input id="date-picker"type="date" />
+
+<div id="todo-list"></div>
+
+<script>
+//MODEL
+
+//if local storage have list todos use it
+//otherwise,use the defult array
+let Todos;
+
+//to retrive the stored arrays
+//use JSON.parse() TO convert string to array
+const saveTodos = JSON.parse(localStorage.getItem('key'));
+
+if(Array.isArray(saveTodos)){
+Todos = saveTodos;
+}else{
+//lists of an array
+Todos = 
+[{title:'get groseries',duedate:'2021-01-01',id:'id1'},
+{title:'Wash car',duedate:'2021-01-02',id:'id2'},
+{title:'Make dinner',duedate:'2021-01-03',id:'id3'}];
+//Todos.push('add kal');
+}
+
+/*let todo1 = 'get groseries';
+let todo2 = 'Wash car';
+let todo3 = 'Make dinner';
+
+function addTodo(Todotitle){
+let element = document.createElement('div');
+element.innerText = Todotitle;
+document.body.appendChild(element);
+}
+
+addTodo(todo1);
+addTodo(todo2);
+addTodo(todo3);*/
+
+render();
+
+//CREATE TODO
+function createtodo(title,duedate){
+
+//make id string using empity cote
+const id = '' + new Date().getTime();
+
+Todos.push({
+title:title,
+duedate:duedate,
+id:id
+});
+savetodos();
+}
+
+//DELATE TODO
+function removetodo(iddelate){
+Todos = Todos.filter(function (Todo){
+//if id of todo match idtodelate,return false
+//if not return true
+if(Todo.id === iddelate){
+return false;
+}else{
+return true;
+}
+});
+
+savetodos();
+}
+
+function savetodos() {
+//use JSON.stringify() to convert array to string
+//b/c local storage only save as string 
+localStorage.setItem('key',JSON.stringify(Todos));
+}
+//CONTROLER
+function addTodo(){
+let textbox = document.getElementById('todo-title');
+let title = textbox.value;
+
+let datepicker = document.getElementById('date-picker');
+let duedate = datepicker.value;
+
+createtodo(title,duedate);
+
+render();
+
+}
+
+function delatetodo(event){
+const delatebutton = event.target;
+const iddelate = delatebutton.id;
+
+removetodo(iddelate);
+
+//to update the wab page after delating
+render();
+}
+//VIEW
+function render(){
+//to clear list
+
+document.getElementById('todo-list').innerHTML=" ";
+
+//using loop to display array elements
+Todos.forEach(function (Todo){
+let element = document.createElement('div');
+element.innerText = Todo.title + ' ' + Todo.duedate;
+element.style = ('margin-top:12px');
+let todolist = document.getElementById('todo-list');
+todolist.appendChild(element);
+
+let delatebutton = document.createElement('button');
+delatebutton.innerText = ('Delate');
+delatebutton.style = ('margin-left:12px');
+delatebutton.onclick = delatetodo;
+//assigining todo id into delatebutton
+delatebutton.id = Todo.id;
+element.appendChild(delatebutton);
+
+});
+}
+
+</script>
+</body>
+</html>
